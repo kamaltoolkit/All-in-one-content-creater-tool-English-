@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>7th Pay Commission Salary Calculator (Advanced) | Updated 2026</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e9f0f5 0%, #d9e2ec 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            margin: 0;
+        }
+
+        .calculator-container {
+            max-width: 1400px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        /* header */
+        .calc-header {
+            background: #1e3c72;
+            background: linear-gradient(135deg, #0b2b44 0%, #123e66 100%);
+            padding: 1.6rem 2rem;
+            color: white;
+        }
+
+        .calc-header h1 {
+            margin: 0 0 0.3rem 0;
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .calc-header p {
+            margin: 0;
+            opacity: 0.85;
+            font-size: 0.95rem;
+        }
+
+        .badge {
+            background: #ffb347;
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #1e2a36;
+            margin-top: 0.7rem;
+        }
+
+        /* two column layout */
+        .calc-main {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .inputs-panel {
+            flex: 1.2;
+            background: #fefefe;
+            padding: 2rem 1.8rem;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .results-panel {
+            flex: 1;
+            background: #f9fafc;
+            padding: 2rem 1.8rem;
+        }
+
+        /* form styling */
+        .input-group {
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #0f2b3d;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .input-group label i {
+            font-weight: normal;
+            color: #2c7da0;
+        }
+
+        input, select {
+            padding: 0.8rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 1rem;
+            font-size: 1rem;
+            background: white;
+            transition: 0.2s;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: #2c7da0;
+            box-shadow: 0 0 0 3px rgba(44,125,160,0.2);
+        }
+
+        .row-2cols {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .row-2cols .input-group {
+            flex: 1;
+        }
+
+        .da-slider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .da-slider input[type="range"] {
+            flex: 2;
+            padding: 0;
+        }
+
+        .da-slider span {
+            background: #eef2ff;
+            padding: 0.4rem 0.9rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            min-width: 65px;
+            text-align: center;
+        }
+
+        .checkbox-group {
+            flex-direction: row;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border-color: #e2edf2;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1rem 1.4rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+            border: 1px solid #eef2f8;
+        }
+
+        .result-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1e4663;
+            border-left: 5px solid #2c7da0;
+            padding-left: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .salary-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem 1.2rem;
+        }
+
+        .break-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px dashed #e9edf2;
+            padding: 0.5rem 0;
+        }
+
+        .break-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #334e68;
+        }
+
+        .break-value {
+            font-weight: 700;
+            color: #1f3a4b;
+            font-size: 1rem;
+        }
+
+        .net-salary {
+            background: #eafaf1;
+            border-radius: 1.2rem;
+            padding: 1rem 1.4rem;
+            margin-top: 1rem;
+            border: 1px solid #c8e6d9;
+        }
+
+        .net-salary .net-amount {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #117a4d;
+            letter-spacing: -0.5px;
+        }
+
+        button {
+            background: #1e4663;
+            border: none;
+            color: white;
+            padding: 0.7rem 1.3rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            background: #0f3552;
+            transform: translateY(-1px);
+        }
+
+        .note {
+            font-size: 0.7rem;
+            color: #5e727f;
+            margin-top: 1.2rem;
+            text-align: center;
+            border-top: 1px solid #e2edf2;
+            padding-top: 1rem;
+        }
+
+        @media (max-width: 850px) {
+            .inputs-panel, .results-panel {
+                flex: auto;
+                width: 100%;
+                border-right: none;
+            }
+            .inputs-panel {
+                border-bottom: 1px solid #e2e8f0;
+            }
+            .salary-breakdown {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="calculator-container">
+    <div class="calc-header">
+        <h1>🇮🇳 7th CPC Salary Calculator</h1>
+        <p>Advanced tool for Central Government Employees | Pay Matrix + DA/HRA/TA + Deductions (NPS, CGEGIS, Prof. Tax, Income Tax)</p>
+        <div class="badge">📅 Updated with latest DA% flexibility & 7th CPC rules</div>
+    </div>
+    <div class="calc-main">
+        <!-- INPUT SECTION -->
+        <div class="inputs-panel">
+            <div class="input-group">
+                <label>💰 Basic Pay (as per Pay Matrix) <span style="font-weight: normal;">(₹)</span></label>
+                <input type="number" id="basicPay" value="47600" step="100" placeholder="Enter basic pay">
+            </div>
+
+            <div class="row-2cols">
+                <div class="input-group">
+                    <label>📊 Pay Level (1-18)</label>
+                    <select id="levelSelect">
+                        <option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option>
+                        <option value="4">Level 4</option><option value="5">Level 5</option><option value="6">Level 6</option>
+                        <option value="7" selected>Level 7</option><option value="8">Level 8</option><option value="9">Level 9</option>
+                        <option value="10">Level 10</option><option value="11">Level 11</option><option value="12">Level 12</option>
+                        <option value="13">Level 13</option><option value="14">Level 14</option><option value="15">Level 15</option>
+                        <option value="16">Level 16</option><option value="17">Level 17</option><option value="18">Level 18</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>🏙️ City Category (HRA + TA)</label>
+                    <select id="citySelect">
+                        <option value="X">X City (Metro/Population 50L+) → HRA 24%</option>
+                        <option value="Y" selected>Y City → HRA 16%</option>
+                        <option value="Z">Z City (Other) → HRA 8%</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>📈 Dearness Allowance (DA%) <span style="font-weight: normal;">(Current effective rate)</span></label>
+                <div class="da-slider">
+                    <input type="range" id="daSlider" min="0" max="70" step="1" value="55">
+                    <span id="daPercentDisplay">55%</span>
+                </div>
+                <input type="number" id="daPercent" value="55" step="1" style="margin-top: 8px;" placeholder="DA %">
+            </div>
+
+            <div class="input-group">
+                <label>➕ Other Allowances (Misc. / CEA / etc.)</label>
+                <input type="number" id="otherAllowances" value="0" step="100" placeholder="Additional allowances">
+            </div>
+
+            <div class="input-group">
+                <label>➖ Other Deductions (License fee / Insurance etc.)</label>
+                <input type="number" id="otherDeductions" value="0" step="100" placeholder="Voluntary deductions">
+            </div>
+
+            <div class="input-group checkbox-group">
+                <input type="checkbox" id="includeTaxCheckbox">
+                <label for="includeTaxCheckbox">🧾 Estimate Income Tax (New Regime + 4% Cess) - approximate</label>
+            </div>
+
+            <button id="resetExampleBtn">📌 Load Example (Level 6, Basic 35400)</button>
+            <div class="note">
+                💡 DA updated as per latest orders (adjust manually). HRA as per 7th CPC 24%/16%/8%. TA includes DA on Transport Allowance.<br>
+                NPS: 10% of (Basic+DA) | CGEGIS based on Level | Professional Tax ₹200
+            </div>
+        </div>
+
+        <!-- RESULTS SECTION -->
+        <div class="results-panel">
+            <div class="result-card">
+                <div class="result-title">💰 EARNINGS</div>
+                <div class="salary-breakdown">
+                    <div class="break-item"><span class="break-label">Basic Pay</span><span class="break-value" id="displayBasic">₹0</span></div>
+                    <div class="break-item"><span class="break-label">Dearness Allowance (DA)</span><span class="break-value" id="displayDA">₹0</span></div>
+                    <div class="break-item"><span class="break-label">House Rent Allowance (HRA)</span><span class="break-value" id="displayHRA">₹0</span></div>
+                    <div class="break-item"><span class="break-label">Transport Allowance (TA+DA on TA)</span><span class="break-value" id="displayTA">₹0</span></div>
+                    <div class="break-item"><span class="break-label">Other Allowances</span><span class="break-value" id="displayOtherAllow">₹0</span></div>
+                    <div class="break-item"><span class="break-label" style="font-weight: 700;">📌 Gross Salary</span><span class="break-value" id="grossSalary" style="font-size: 1.15rem;">₹0</span></div>
+                </div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-title">🔻 DEDUCTIONS</div>
+                <div class="salary-breakdown">
+                    <div class="break-item"><span class="break-label">NPS (10% of Basic+DA)</span><span class="break-value" id="npsDeduction">₹0</span></div>
+                    <div class="break-item"><span class="break-label">CGEGIS (Central Govt. Insurance)</span><span class="break-value" id="cgegisDeduction">₹0</span></div>
+                    <div class="break-item"><span class="break-label">Professional Tax</span><span class="break-value" id="profTax">₹200</span></div>
+                    <div class="break-item"><span class="break-label">Income Tax (Estimate)</span><span class="break-value" id="incomeTaxAmount">₹0</span></div>
+                    <div class="break-item"><span class="break-label">Other Deductions</span><span class="break-value" id="displayOtherDed">₹0</span></div>
+                    <div class="break-item"><span class="break-label" style="font-weight: 700;">⚡ Total Deductions</span><span class="break-value" id="totalDeductions" style="color:#b13e3e;">₹0</span></div>
+                </div>
+            </div>
+
+            <div class="net-salary">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
+                    <span class="break-label" style="font-size: 1.2rem; font-weight: 600;">💰 NET PAY (In-hand Salary)</span>
+                    <span class="net-amount" id="netSalary">₹0</span>
+                </div>
+                <div class="note" style="margin-top: 10px; border: none; text-align: left; padding: 0;">
+                    ✅ Includes DA on TA | HRA as per city | NPS & CGEGIS as per rules
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- DOM Elements ----------
+    const basicPayInput = document.getElementById('basicPay');
+    const levelSelect = document.getElementById('levelSelect');
+    const citySelect = document.getElementById('citySelect');
+    const daSlider = document.getElementById('daSlider');
+    const daPercentInput = document.getElementById('daPercent');
+    const daPercentDisplay = document.getElementById('daPercentDisplay');
+    const otherAllowancesInput = document.getElementById('otherAllowances');
+    const otherDeductionsInput = document.getElementById('otherDeductions');
+    const includeTaxCheckbox = document.getElementById('includeTaxCheckbox');
+    const resetBtn = document.getElementById('resetExampleBtn');
+
+    // Display fields
+    const displayBasic = document.getElementById('displayBasic');
+    const displayDA = document.getElementById('displayDA');
+    const displayHRA = document.getElementById('displayHRA');
+    const displayTA = document.getElementById('displayTA');
+    const displayOtherAllow = document.getElementById('displayOtherAllow');
+    const grossSalarySpan = document.getElementById('grossSalary');
+    const npsDeductionSpan = document.getElementById('npsDeduction');
+    const cgegisDeductionSpan = document.getElementById('cgegisDeduction');
+    const profTaxSpan = document.getElementById('profTax');
+    const incomeTaxAmountSpan = document.getElementById('incomeTaxAmount');
+    const displayOtherDed = document.getElementById('displayOtherDed');
+    const totalDeductionsSpan = document.getElementById('totalDeductions');
+    const netSalarySpan = document.getElementById('netSalary');
+
+    // Helper: format INR
+    function formatINR(amount) {
+        return '₹' + Math.round(amount).toLocaleString('en-IN');
+    }
+
+    // Get DA % value (from slider or number input)
+    function getDaPercent() {
+        let sliderVal = parseInt(daSlider.value, 10);
+        let inputVal = parseInt(daPercentInput.value, 10);
+        if (!isNaN(inputVal) && inputVal >= 0 && inputVal <= 200) {
+            if (sliderVal !== inputVal) {
+                daSlider.value = inputVal;
+                daPercentDisplay.innerText = inputVal + '%';
+            }
+            return inputVal;
+        } else {
+            daPercentInput.value = sliderVal;
+            daPercentDisplay.innerText = sliderVal + '%';
+            return sliderVal;
+        }
+    }
+
+    // Sync DA slider & numeric input
+    function syncDa() {
+        let percent = getDaPercent();
+        daPercentInput.value = percent;
+        daSlider.value = percent;
+        daPercentDisplay.innerText = percent + '%';
+        computeAll();
+    }
+
+    daSlider.addEventListener('input', function() {
+        let val = parseInt(daSlider.value, 10);
+        daPercentInput.value = val;
+        daPercentDisplay.innerText = val + '%';
+        computeAll();
+    });
+    daPercentInput.addEventListener('input', function() {
+        let val = parseInt(daPercentInput.value, 10);
+        if (!isNaN(val)) {
+            daSlider.value = val;
+            daPercentDisplay.innerText = val + '%';
+            computeAll();
+        } else {
+            computeAll();
+        }
+    });
+
+    // Transport allowance logic based on level group and city
+    function getTransportAllowance(level, cityType, daPercentVal) {
+        let group = '';
+        if (level >= 1 && level <= 6) group = 'A';
+        else if (level >= 7 && level <= 11) group = 'B';
+        else group = 'C';  // level 12 to 18
+        
+        let baseTA = 0;
+        if (cityType === 'X') {
+            if (group === 'A' || group === 'B') baseTA = 3600;
+            else baseTA = 7200;
+        } else { // Y or Z cities
+            if (group === 'A' || group === 'B') baseTA = 1800;
+            else baseTA = 3600;
+        }
+        // TA includes DA on TA
+        let taWithDA = baseTA * (1 + daPercentVal / 100);
+        return Math.round(taWithDA);
+    }
+
+    // CGEGIS deduction as per level (official approx)
+    function getCGEGIS(level) {
+        if (level <= 2) return 30;
+        if (level <= 5) return 75;
+        if (level === 6) return 150;
+        if (level === 7) return 300;
+        if (level === 8 || level === 9) return 450;
+        if (level === 10 || level === 11) return 600;
+        if (level >= 12 && level <= 14) return 750;
+        return 1500;  // level 15 to 18
+    }
+
+    // HRA % based on city type
+    function getHraPercent(cityType) {
+        if (cityType === 'X') return 24;
+        if (cityType === 'Y') return 16;
+        return 8;
+    }
+
+    // Income Tax (New regime + Standard Deduction 50k + 4% cess) estimate
+    function computeIncomeTax(grossSalary, npsAmount, profTaxAmt = 200) {
+        // taxable income = Gross Salary - NPS (employee contribution) - Standard Deduction (50,000)
+        let taxableIncome = grossSalary - npsAmount - 50000;
+        if (taxableIncome < 0) taxableIncome = 0;
+        
+        let tax = 0;
+        // new regime slabs FY 2025-26 (typical)
+        if (taxableIncome <= 300000) tax = 0;
+        else if (taxableIncome <= 700000) tax = (taxableIncome - 300000) * 0.05;
+        else if (taxableIncome <= 1000000) tax = 20000 + (taxableIncome - 700000) * 0.10;
+        else if (taxableIncome <= 1200000) tax = 50000 + (taxableIncome - 1000000) * 0.15;
+        else if (taxableIncome <= 1500000) tax = 80000 + (taxableIncome - 1200000) * 0.20;
+        else tax = 140000 + (taxableIncome - 1500000) * 0.30;
+        
+        // Add 4% health & education cess
+        let cess = tax * 0.04;
+        let totalTax = tax + cess;
+        return Math.round(totalTax);
+    }
+
+    // main compute function
+    function computeAll() {
+        // get inputs
+        let basic = parseFloat(basicPayInput.value);
+        if (isNaN(basic) || basic < 0) basic = 0;
+        let level = parseInt(levelSelect.value, 10);
+        let city = citySelect.value;
+        let daPercentVal = getDaPercent();
+        let otherAllow = parseFloat(otherAllowancesInput.value);
+        if (isNaN(otherAllow)) otherAllow = 0;
+        let otherDed = parseFloat(otherDeductionsInput.value);
+        if (isNaN(otherDed)) otherDed = 0;
+        let includeTax = includeTaxCheckbox.checked;
+
+        // Compute DA amount
+        let daAmount = basic * (daPercentVal / 100);
+        // HRA
+        let hraPercent = getHraPercent(city);
+        let hraAmount = basic * (hraPercent / 100);
+        // TA
+        let taAmount = getTransportAllowance(level, city, daPercentVal);
+        // Gross Salary
+        let grossSalary = basic + daAmount + hraAmount + taAmount + otherAllow;
+        
+        // NPS (10% of Basic+DA)
+        let nps = (basic + daAmount) * 0.10;
+        // CGEGIS
+        let cgegis = getCGEGIS(level);
+        let profTax = 200;  // fixed professional tax
+        let incomeTax = 0;
+        if (includeTax) {
+            incomeTax = computeIncomeTax(grossSalary, nps, profTax);
+        }
+        let totalDeductions = nps + cgegis + profTax + incomeTax + otherDed;
+        let netSalary = grossSalary - totalDeductions;
+        if (netSalary < 0) netSalary = 0;
+
+        // Update Earnings UI
+        displayBasic.innerText = formatINR(basic);
+        displayDA.innerText = formatINR(daAmount);
+        displayHRA.innerText = formatINR(hraAmount);
+        displayTA.innerText = formatINR(taAmount);
+        displayOtherAllow.innerText = formatINR(otherAllow);
+        grossSalarySpan.innerText = formatINR(grossSalary);
+        
+        // Deductions UI
+        npsDeductionSpan.innerText = formatINR(nps);
+        cgegisDeductionSpan.innerText = formatINR(cgegis);
+        profTaxSpan.innerText = formatINR(profTax);
+        incomeTaxAmountSpan.innerText = includeTax ? formatINR(incomeTax) : '₹0 (Not included)';
+        displayOtherDed.innerText = formatINR(otherDed);
+        totalDeductionsSpan.innerText = formatINR(totalDeductions);
+        netSalarySpan.innerText = formatINR(netSalary);
+        
+        // Additional small styling for income tax if not included
+        if (!includeTax) {
+            incomeTaxAmountSpan.style.opacity = '0.7';
+        } else {
+            incomeTaxAmountSpan.style.opacity = '1';
+        }
+    }
+
+    // attach event listeners
+    const inputs = [basicPayInput, levelSelect, citySelect, otherAllowancesInput, otherDeductionsInput, includeTaxCheckbox];
+    inputs.forEach(el => el.addEventListener('input', computeAll));
+    levelSelect.addEventListener('change', computeAll);
+    citySelect.addEventListener('change', computeAll);
+    
+    // Reset example
+    resetBtn.addEventListener('click', () => {
+        basicPayInput.value = 35400;
+        levelSelect.value = '6';   // Level 6
+        citySelect.value = 'X';     // X City
+        daSlider.value = 55;
+        daPercentInput.value = 55;
+        daPercentDisplay.innerText = '55%';
+        otherAllowancesInput.value = 0;
+        otherDeductionsInput.value = 0;
+        includeTaxCheckbox.checked = false;
+        computeAll();
+    });
+    
+    // initial load
+    computeAll();
+    
+    // sync DA on extra load
+    window.addEventListener('load', () => {
+        syncDa();
+    });
+</script>
+</body>
+</html>
