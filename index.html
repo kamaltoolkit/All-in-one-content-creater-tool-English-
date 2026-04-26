@@ -18,6 +18,7 @@
             align-items: center;
             padding: 2rem 1rem;
             margin: 0;
+            flex-direction: column;
         }
 
         .calculator-container {
@@ -251,6 +252,29 @@
             padding-top: 1rem;
         }
 
+        /* Footer Styling */
+        footer {
+            margin-top: 40px;
+            padding: 25px 20px;
+            background: #f8f9fa;
+            border-top: 2px solid #ddd;
+            text-align: center;
+            font-size: 0.95em;
+            max-width: 1400px;
+            width: 100%;
+            border-radius: 0 0 2rem 2rem;
+        }
+
+        footer a {
+            color: #1976d2;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 850px) {
             .inputs-panel, .results-panel {
                 flex: auto;
@@ -267,6 +291,7 @@
     </style>
 </head>
 <body>
+
 <div class="calculator-container">
     <div class="calc-header">
         <h1>🇮🇳 7th CPC Salary Calculator</h1>
@@ -449,27 +474,24 @@
         }
     });
 
-    // Transport allowance logic based on level group and city
     function getTransportAllowance(level, cityType, daPercentVal) {
         let group = '';
         if (level >= 1 && level <= 6) group = 'A';
         else if (level >= 7 && level <= 11) group = 'B';
-        else group = 'C';  // level 12 to 18
+        else group = 'C';
         
         let baseTA = 0;
         if (cityType === 'X') {
             if (group === 'A' || group === 'B') baseTA = 3600;
             else baseTA = 7200;
-        } else { // Y or Z cities
+        } else {
             if (group === 'A' || group === 'B') baseTA = 1800;
             else baseTA = 3600;
         }
-        // TA includes DA on TA
         let taWithDA = baseTA * (1 + daPercentVal / 100);
         return Math.round(taWithDA);
     }
 
-    // CGEGIS deduction as per level (official approx)
     function getCGEGIS(level) {
         if (level <= 2) return 30;
         if (level <= 5) return 75;
@@ -478,24 +500,20 @@
         if (level === 8 || level === 9) return 450;
         if (level === 10 || level === 11) return 600;
         if (level >= 12 && level <= 14) return 750;
-        return 1500;  // level 15 to 18
+        return 1500;
     }
 
-    // HRA % based on city type
     function getHraPercent(cityType) {
         if (cityType === 'X') return 24;
         if (cityType === 'Y') return 16;
         return 8;
     }
 
-    // Income Tax (New regime + Standard Deduction 50k + 4% cess) estimate
     function computeIncomeTax(grossSalary, npsAmount, profTaxAmt = 200) {
-        // taxable income = Gross Salary - NPS (employee contribution) - Standard Deduction (50,000)
         let taxableIncome = grossSalary - npsAmount - 50000;
         if (taxableIncome < 0) taxableIncome = 0;
         
         let tax = 0;
-        // new regime slabs FY 2025-26 (typical)
         if (taxableIncome <= 300000) tax = 0;
         else if (taxableIncome <= 700000) tax = (taxableIncome - 300000) * 0.05;
         else if (taxableIncome <= 1000000) tax = 20000 + (taxableIncome - 700000) * 0.10;
@@ -503,50 +521,34 @@
         else if (taxableIncome <= 1500000) tax = 80000 + (taxableIncome - 1200000) * 0.20;
         else tax = 140000 + (taxableIncome - 1500000) * 0.30;
         
-        // Add 4% health & education cess
         let cess = tax * 0.04;
-        let totalTax = tax + cess;
-        return Math.round(totalTax);
+        return Math.round(tax + cess);
     }
 
-    // main compute function
     function computeAll() {
-        // get inputs
-        let basic = parseFloat(basicPayInput.value);
-        if (isNaN(basic) || basic < 0) basic = 0;
+        let basic = parseFloat(basicPayInput.value) || 0;
         let level = parseInt(levelSelect.value, 10);
         let city = citySelect.value;
         let daPercentVal = getDaPercent();
-        let otherAllow = parseFloat(otherAllowancesInput.value);
-        if (isNaN(otherAllow)) otherAllow = 0;
-        let otherDed = parseFloat(otherDeductionsInput.value);
-        if (isNaN(otherDed)) otherDed = 0;
+        let otherAllow = parseFloat(otherAllowancesInput.value) || 0;
+        let otherDed = parseFloat(otherDeductionsInput.value) || 0;
         let includeTax = includeTaxCheckbox.checked;
 
-        // Compute DA amount
         let daAmount = basic * (daPercentVal / 100);
-        // HRA
         let hraPercent = getHraPercent(city);
         let hraAmount = basic * (hraPercent / 100);
-        // TA
         let taAmount = getTransportAllowance(level, city, daPercentVal);
-        // Gross Salary
         let grossSalary = basic + daAmount + hraAmount + taAmount + otherAllow;
         
-        // NPS (10% of Basic+DA)
         let nps = (basic + daAmount) * 0.10;
-        // CGEGIS
         let cgegis = getCGEGIS(level);
-        let profTax = 200;  // fixed professional tax
-        let incomeTax = 0;
-        if (includeTax) {
-            incomeTax = computeIncomeTax(grossSalary, nps, profTax);
-        }
+        let profTax = 200;
+        let incomeTax = includeTax ? computeIncomeTax(grossSalary, nps, profTax) : 0;
+        
         let totalDeductions = nps + cgegis + profTax + incomeTax + otherDed;
-        let netSalary = grossSalary - totalDeductions;
-        if (netSalary < 0) netSalary = 0;
+        let netSalary = Math.max(0, grossSalary - totalDeductions);
 
-        // Update Earnings UI
+        // Update UI
         displayBasic.innerText = formatINR(basic);
         displayDA.innerText = formatINR(daAmount);
         displayHRA.innerText = formatINR(hraAmount);
@@ -554,7 +556,6 @@
         displayOtherAllow.innerText = formatINR(otherAllow);
         grossSalarySpan.innerText = formatINR(grossSalary);
         
-        // Deductions UI
         npsDeductionSpan.innerText = formatINR(nps);
         cgegisDeductionSpan.innerText = formatINR(cgegis);
         profTaxSpan.innerText = formatINR(profTax);
@@ -562,26 +563,18 @@
         displayOtherDed.innerText = formatINR(otherDed);
         totalDeductionsSpan.innerText = formatINR(totalDeductions);
         netSalarySpan.innerText = formatINR(netSalary);
-        
-        // Additional small styling for income tax if not included
-        if (!includeTax) {
-            incomeTaxAmountSpan.style.opacity = '0.7';
-        } else {
-            incomeTaxAmountSpan.style.opacity = '1';
-        }
     }
 
-    // attach event listeners
+    // Event Listeners
     const inputs = [basicPayInput, levelSelect, citySelect, otherAllowancesInput, otherDeductionsInput, includeTaxCheckbox];
     inputs.forEach(el => el.addEventListener('input', computeAll));
     levelSelect.addEventListener('change', computeAll);
     citySelect.addEventListener('change', computeAll);
     
-    // Reset example
     resetBtn.addEventListener('click', () => {
         basicPayInput.value = 35400;
-        levelSelect.value = '6';   // Level 6
-        citySelect.value = 'X';     // X City
+        levelSelect.value = '6';
+        citySelect.value = 'X';
         daSlider.value = 55;
         daPercentInput.value = 55;
         daPercentDisplay.innerText = '55%';
@@ -591,31 +584,25 @@
         computeAll();
     });
     
-    // initial load
     computeAll();
     
-    // sync DA on extra load
     window.addEventListener('load', () => {
         syncDa();
     });
 </script>
-    </script>   <!-- Yeh sirf ek baar rahega -->
 
-    <!-- ==================== FOOTER ==================== -->
-    <footer style="text-align: center; margin-top: 50px; padding: 25px; background: #f8f9fa; border-top: 1px solid #ddd; font-size: 0.95em;">
-        <p style="margin: 10px 0;">
-            <a href="index.html">🏠 Home</a> &nbsp;•&nbsp; 
-            <a href="about.html">About Us</a> &nbsp;•&nbsp; 
-            <a href="disclaimer.html">Disclaimer</a> &nbsp;•&nbsp; 
-            <a href="privacy.html">Privacy Policy</a> &nbsp;•&nbsp; 
-            <a href="terms.html">Terms & Conditions</a>
-        </p>
-        <p style="margin: 8px 0; color: #555;">
-            Made with ❤️ by Kamal Toolkit | For Central Government Employees | Updated April 2026
-        </p>
-    </footer>
+<!-- ==================== FOOTER ==================== -->
+<footer>
+    <p>
+        <a href="index.html">🏠 Home</a> • 
+        <a href="about.html">About Us</a> • 
+        <a href="disclaimer.html">Disclaimer</a> • 
+        <a href="privacy.html">Privacy Policy</a> • 
+        <a href="terms.html">Terms & Conditions</a>
+    </p>
+    <p>Made with ❤️ by Kamal Toolkit | For Central Government Employees | Updated April 2026</p>
+</footer>
 
 </body>
 </html>
-
 
